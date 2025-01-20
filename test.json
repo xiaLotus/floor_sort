@@ -1,0 +1,47 @@
+{
+    "K11-3F": {
+        "name": "K11-3F-1",
+        "type": "room",
+        "description": "This is a room",
+        "exits": {
+            "north": "K11-3F-2",
+            "south": "K11-3F-3"
+        }
+    },
+    "K11-4F": {
+        "name": "K11-4F 1",
+        "type": "room",
+        "description": "This is a room",
+        "exits": {
+            "north": "K11-4F 2",
+            "south": "K11-4F 3"
+        }
+    },
+    "K11-5F": {
+        "name": "k11-5f-1",
+        "type": "room",
+        "description": "This is a room",
+        "exits": {
+            "north": "k11-5f-2",
+            "south": "k11-5f-3"
+        }
+    },
+    "K11-10F": {
+        "name": "K11-10F",
+        "type": "room",
+        "description": "This is a room",
+        "exits": {
+            "north": "K11-10F-1",
+            "south": "K11-10F-2"
+        }
+    },
+    "其他": {
+        "name": "其他",
+        "type": "room",
+        "description": "This is a room",
+        "exits": {
+            "north": "其他-1",
+            "south": "其他-2"
+        }
+    }
+}

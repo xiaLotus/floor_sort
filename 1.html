@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>樓層展示</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .floor {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>樓層展示</h1>
+        <div v-for="(floor, key) in floors" :key="key" class="floor">
+            <h2>{{ key }}</h2> <!-- 按 key 顯示 -->
+            <!-- <p><strong>描述：</strong>{{ floor.description }}</p>
+            <h3>出口：</h3>
+            <ul>
+                <li v-for="(exit, direction) in floor.exits" :key="direction">
+                    {{ direction }}: {{ exit }}
+                </li> -->
+            <!-- </ul> -->
+        </div>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    floors: {}
+                };
+            },
+            created() {
+                this.fetchData();
+            },
+            methods: {
+                fetchData() {
+                    axios.get('http://localhost:5000/api/data')
+                        .then(response => {
+                            this.floors = response.data;
+                            this.sortFloors();
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
+                },
+                sortFloors() {
+                    const sortedKeys = Object.keys(this.floors).sort((a, b) => {
+                        const isAStartsWithK = a.startsWith('K');
+                        const isBStartsWithK = b.startsWith('K');
+
+                        if (isAStartsWithK && !isBStartsWithK) {
+                            return -1; // 'K' 開頭的排在前面
+                        }
+                        if (!isAStartsWithK && isBStartsWithK) {
+                            return 1; // 非 'K' 開頭的排在後面
+                        }
+                        if (isAStartsWithK && isBStartsWithK) {
+                            // 如果都以 'K' 開頭，則比較 K 後的數字和樓層數字
+                            const buildingANumber = this.extractBuildingNumber(a);
+                            const buildingBNumber = this.extractBuildingNumber(b);
+
+                            if (buildingANumber !== buildingBNumber) {
+                                return buildingANumber - buildingBNumber; // 比較 K 後的數字
+                            }
+
+                            const floorANumber = this.extractFloorNumber(a);
+                            const floorBNumber = this.extractFloorNumber(b);
+                            return floorANumber - floorBNumber; // 比較樓層數字
+                        }
+                        // 如果都不以 'K' 開頭，則按字母順序排序
+                        return a.localeCompare(b);
+                    });
+
+                    const sortedFloors = {};
+                    sortedKeys.forEach(key => {
+                        sortedFloors[key] = this.floors[key];
+                    });
+                    this.floors = sortedFloors;
+                },
+                extractBuildingNumber(key) {
+                    const match = key.match(/K(\d+)-\d+F/);
+                    if (match) {
+                        return parseInt(match[1], 10);
+                    }
+                    return 0;
+                },
+                extractFloorNumber(key) {
+                    const match = key.match(/K\d+-(\d+)F/);
+                    if (match) {
+                        return parseInt(match[1], 10);
+                    }
+                    return 0;
+                }
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
